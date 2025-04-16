@@ -46,6 +46,11 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
                 'root-path' => $this->rootPath
             ]
         ]);
+
+        if (!getenv('ROOT_PATH')){
+            putenv(sprintf('ROOT_PATH=%s', $this->rootPath));
+            $_ENV['ROOT_PATH'] = getenv('ROOT_PATH');
+        }
     }
 
     public function deactivate(Composer $composer, IOInterface $io)
