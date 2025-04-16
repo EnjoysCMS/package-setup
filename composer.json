@@ -1,0 +1,22 @@
+{
+    "name": "enjoyscms/package-setup",
+    "description": "Package configurator for EnjoysCMS",
+    "type": "composer-plugin",
+    "require": {
+        "php": "^8.3",
+        "enjoyscms/core": "6.x-dev",
+        "composer-plugin-api": "^2.0"
+    },
+    "require-dev": {
+        "composer/composer": "^2.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Enjoyscms\\PackageSetup\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "\\Enjoyscms\\PackageSetup\\PackageConfigurator"
+    }
+}
