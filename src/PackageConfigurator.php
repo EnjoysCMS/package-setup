@@ -9,6 +9,7 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
 use Enjoyscms\PackageSetup\SetupHandlers\Cmd;
+use Enjoyscms\PackageSetup\SetupHandlers\ConsoleConfigurator;
 use Enjoyscms\PackageSetup\SetupHandlers\Env;
 use Enjoyscms\PackageSetup\SetupHandlers\SetupHandler;
 use Enjoyscms\PackageSetup\SetupHandlers\Symlink;
@@ -29,6 +30,7 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
         Cmd::class,
         Env::class,
         Symlink::class,
+        ConsoleConfigurator::class
     ];
 
     public function activate(Composer $composer, IOInterface $io): void
@@ -62,11 +64,12 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
         ];
     }
 
-    public function process(Event $event)
+    public function process(Event $event): void
     {
-        $handlePaths = [
+        $handlePaths = array_merge([
             'Application' => $this->rootPath . '/install.json',
-        ];
+        ], $this->getModulesInfo());
+
 
         foreach ($handlePaths as $package => $path) {
             if (!file_exists($path)) {
@@ -75,7 +78,7 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 
             $packageConfig = json_decode(file_get_contents($path), true);
 
-            $this->io->write(sprintf('<warning>Configuring is %s...</warning>', $package));
+            $this->io->write(["", sprintf("<warning>%s is configuring...</warning>", $package)]);
 
             foreach ($this->handlers as $handlerClass) {
                 $handler = new $handlerClass($packageConfig, $this->composer, $this->io);
@@ -83,6 +86,47 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
                 $handler->process();
             }
         }
-        $this->io->write('<info>enjoyscms/package-setup:</info> Packages is configured');
+        $this->io->write(["", "<info>enjoyscms/package-setup:</info> Packages is configured"]);
+    }
+
+    private function getModulesInfo(): array
+    {
+        $result = [];
+
+        foreach ($this->findPackages('enjoyscms') as $package) {
+            if (!file_exists($package['install_path'] . '/install.json')) {
+                continue;
+            }
+            $result[sprintf(
+                '%s',
+                $package['name']
+            )] = $package['install_path'] . '/install.json';
+        }
+        return $result;
+    }
+
+    private function findPackages(?string $packageNamePattern = null, ?string $type = null): array
+    {
+        $result = [];
+        foreach ($this->installedPackages as $packageName => $packageInfo) {
+            if (!array_key_exists('install_path', $packageInfo) || $packageInfo['install_path'] === null) {
+                continue;
+            }
+            $packageInfo['name'] = $packageName;
+            $packageInfo['install_path'] = realpath($packageInfo['install_path']);
+
+            if ($packageNamePattern !== null) {
+                if (\str_contains($packageName, $packageNamePattern)) {
+                    $result[] = $packageInfo;
+                    continue;
+                }
+            }
+            if ($type !== null) {
+                if ($packageInfo['type'] === $type) {
+                    $result[] = $packageInfo;
+                }
+            }
+        }
+        return $result;
     }
 }
