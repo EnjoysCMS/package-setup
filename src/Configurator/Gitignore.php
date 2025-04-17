@@ -1,11 +1,11 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
 
-class Gitignore extends SetupHandler
+class Gitignore extends AbstractConfigurator
 {
 
     public function process(): void

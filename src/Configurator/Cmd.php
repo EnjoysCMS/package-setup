@@ -1,10 +1,10 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
 use Symfony\Component\Process\Process;
 
-class Cmd extends SetupHandler
+class Cmd extends AbstractConfigurator
 {
 
     public function process(): void

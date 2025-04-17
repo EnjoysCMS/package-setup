@@ -1,11 +1,11 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
 
-abstract class SetupHandler
+abstract class AbstractConfigurator
 {
     protected string $cwd;
 

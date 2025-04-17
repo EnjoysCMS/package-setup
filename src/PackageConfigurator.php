@@ -8,37 +8,26 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
-use Enjoyscms\PackageSetup\SetupHandlers\Cmd;
-use Enjoyscms\PackageSetup\SetupHandlers\ConsoleConfigurator;
-use Enjoyscms\PackageSetup\SetupHandlers\Env;
-use Enjoyscms\PackageSetup\SetupHandlers\SetupHandler;
-use Enjoyscms\PackageSetup\SetupHandlers\Symlink;
+use Enjoyscms\PackageSetup\Configurator\Cmd;
+use Enjoyscms\PackageSetup\Configurator\ConsoleProjectYml;
+use Enjoyscms\PackageSetup\Configurator\Env;
+use Enjoyscms\PackageSetup\Configurator\AbstractConfigurator;
+use Enjoyscms\PackageSetup\Configurator\Symlink;
 
 class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 {
 
     private Composer $composer;
     private IOInterface $io;
-    private string $vendorDir;
     private array $installedPackages;
     private string $rootPath;
-
-    /**
-     * @var class-string<SetupHandler>[]
-     */
-    private array $handlers = [
-        Cmd::class,
-        Env::class,
-        Symlink::class,
-        ConsoleConfigurator::class
-    ];
 
     public function activate(Composer $composer, IOInterface $io): void
     {
         $this->composer = $composer;
         $this->io = $io;
-        $this->vendorDir = $this->composer->getConfig()->get('vendor-dir');
-        $installed = require $this->vendorDir . '/composer/installed.php';
+        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
+        $installed = require $vendorDir . '/composer/installed.php';
         $this->installedPackages = $installed['versions'];
         $this->rootPath = realpath($installed['root']['install_path']);
         $this->composer->getConfig()->merge([
@@ -85,11 +74,16 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 
             $this->io->write(["", sprintf("<warning>%s is configuring...</warning>", $package)]);
 
-            foreach ($this->handlers as $handlerClass) {
+            foreach ($packageConfig as $configurator => $config) {
+                $handlerClass = Configurator::tryFrom($configurator)?->handler();
+                if ($handlerClass === null) {
+                    continue;
+                }
                 $handler = new $handlerClass($packageConfig, $this->composer, $this->io);
                 $handler->setCwd(pathinfo($path, PATHINFO_DIRNAME));
                 $handler->process();
             }
+
         }
         $this->io->write(["", "<info>enjoyscms/package-setup:</info> Packages is configured"]);
     }
@@ -99,9 +93,6 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
         $result = [];
 
         foreach ($this->findPackages('enjoyscms') as $package) {
-            if (!file_exists($package['install_path'] . '/install.json')) {
-                continue;
-            }
             $result[sprintf(
                 '%s',
                 $package['name']

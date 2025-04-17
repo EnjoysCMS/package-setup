@@ -1,11 +1,11 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Symlink extends SetupHandler
+class Symlink extends AbstractConfigurator
 {
 
     public function process(): void

@@ -1,10 +1,10 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
 use Enjoyscms\PackageSetup\Utils\ConsoleCommandManager;
 
-class ConsoleConfigurator extends SetupHandler
+class ConsoleProjectYml extends AbstractConfigurator
 {
 
     /**
