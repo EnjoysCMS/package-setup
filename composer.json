@@ -11,12 +11,18 @@
         "enjoys/config": "^1.8"
     },
     "require-dev": {
-        "composer/composer": "^2.0"
+        "composer/composer": "^2.0",
+        "phpunit/phpunit": "^12.1"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Enjoyscms\\PackageSetup\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Enjoyscms\\PackageSetup\\": "tests/"
         }
     },
     "extra": {
