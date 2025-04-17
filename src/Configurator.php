@@ -4,6 +4,7 @@ namespace Enjoyscms\PackageSetup;
 
 use Enjoyscms\PackageSetup\Configurator\AbstractConfigurator;
 use Enjoyscms\PackageSetup\Configurator\Cmd;
+use Enjoyscms\PackageSetup\Configurator\ComposerScripts;
 use Enjoyscms\PackageSetup\Configurator\ConsoleProjectYml;
 use Enjoyscms\PackageSetup\Configurator\Env;
 use Enjoyscms\PackageSetup\Configurator\Gitignore;
@@ -17,6 +18,7 @@ enum Configurator: string
     case Env = 'env';
     case Gitignore = 'gitignore';
     case Copy = 'copy';
+    case ComposerScripts = 'composer-scripts';
 
     /**
      * @return class-string<AbstractConfigurator>|null
@@ -30,6 +32,7 @@ enum Configurator: string
             self::Env => Env::class,
             self::Gitignore => Gitignore::class,
             self::Copy => null,
+            self::ComposerScripts => ComposerScripts::class,
         };
     }
 }
