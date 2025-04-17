@@ -79,7 +79,7 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
                 if ($handlerClass === null) {
                     continue;
                 }
-                $handler = new $handlerClass($options, $this->composer, $this->io);
+                $handler = new $handlerClass($options, $this->composer, $this->io, $package);
                 $handler->setCwd(pathinfo($path, PATHINFO_DIRNAME));
                 $handler->process();
             }

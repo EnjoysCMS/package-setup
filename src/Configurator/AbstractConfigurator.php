@@ -12,7 +12,8 @@ abstract class AbstractConfigurator
     public function __construct(
         protected array $options,
         public readonly Composer $composer,
-        public readonly IOInterface $io
+        public readonly IOInterface $io,
+        protected ?string $section = null,
     ) {
         $this->cwd = getcwd();
     }
