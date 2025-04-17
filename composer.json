@@ -4,7 +4,7 @@
     "type": "composer-plugin",
     "require": {
         "php": "^8.3",
-        "enjoys/dotenv-writer": "dev-master",
+        "enjoys/dotenv-writer": "^0.1.4",
         "composer-plugin-api": "^2.0",
         "symfony/yaml": "^5.4 | ^6.0 | ^7.2",
         "enjoys/functions": "^2.4",
