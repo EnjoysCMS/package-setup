@@ -5,7 +5,10 @@
     "require": {
         "php": "^8.3",
         "enjoys/dotenv-writer": "dev-master",
-        "composer-plugin-api": "^2.0"
+        "composer-plugin-api": "^2.0",
+        "symfony/yaml": "^5.4 | ^6.0 | ^7.2",
+        "enjoys/functions": "^2.4",
+        "enjoys/config": "^1.8"
     },
     "require-dev": {
         "composer/composer": "^2.0"

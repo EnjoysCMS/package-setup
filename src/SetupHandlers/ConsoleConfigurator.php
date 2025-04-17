@@ -2,11 +2,14 @@
 
 namespace Enjoyscms\PackageSetup\SetupHandlers;
 
-use EnjoysCMS\Core\Console\Utils\CommandsManage;
+use Enjoyscms\PackageSetup\Utils\ConsoleCommandManager;
 
 class ConsoleConfigurator extends SetupHandler
 {
 
+    /**
+     * @throws \Exception
+     */
     public function process(): void
     {
         if (!array_key_exists('console', $this->config)) {
@@ -15,7 +18,7 @@ class ConsoleConfigurator extends SetupHandler
 
         $consoleCommands = $this->config['console'];
 
-        $commandManage = new CommandsManage();
+        $commandManage = new ConsoleCommandManager();
         $registeredCommands = $commandManage->registerCommands($consoleCommands);
         $this->io->write('<comment>Register console commands:</comment>');
         if ($registeredCommands === []) {
