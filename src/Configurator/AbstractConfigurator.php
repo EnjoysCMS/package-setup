@@ -10,7 +10,7 @@ abstract class AbstractConfigurator
     protected string $cwd;
 
     public function __construct(
-        protected array $config,
+        protected array $options,
         public readonly Composer $composer,
         public readonly IOInterface $io
     ) {

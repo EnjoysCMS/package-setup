@@ -10,8 +10,6 @@ class Gitignore extends AbstractConfigurator
 
     public function process(): void
     {
-        if (!array_key_exists('gitignore', $this->config)) {
-            return;
-        }
+
     }
 }

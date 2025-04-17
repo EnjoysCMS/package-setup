@@ -2,21 +2,20 @@
 
 namespace Enjoyscms\PackageSetup\Configurator;
 
+use Composer\Composer;
+use Composer\IO\IOInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Symlink extends AbstractConfigurator
 {
 
+
     public function process(): void
     {
-        if (!array_key_exists('symlink', $this->config)) {
-            return;
-        }
-        $symlinks = $this->config['symlink'];
         $filesystem = new Filesystem();
 
-        foreach ($symlinks as $target => $link) {
+        foreach ($this->options as $target => $link) {
             try {
                 $originDir = $this->normalizePath($target);
                 $targetDir = $this->normalizePath($link);

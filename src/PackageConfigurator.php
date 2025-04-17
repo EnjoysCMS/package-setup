@@ -74,12 +74,12 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 
             $this->io->write(["", sprintf("<warning>%s is configuring...</warning>", $package)]);
 
-            foreach ($packageConfig as $configurator => $config) {
+            foreach ($packageConfig as $configurator => $options) {
                 $handlerClass = Configurator::tryFrom($configurator)?->handler();
                 if ($handlerClass === null) {
                     continue;
                 }
-                $handler = new $handlerClass($packageConfig, $this->composer, $this->io);
+                $handler = new $handlerClass($options, $this->composer, $this->io);
                 $handler->setCwd(pathinfo($path, PATHINFO_DIRNAME));
                 $handler->process();
             }
