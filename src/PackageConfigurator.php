@@ -20,13 +20,14 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
     private Composer $composer;
     private IOInterface $io;
     private string $rootPath;
+    private string $vendorDir;
 
     public function activate(Composer $composer, IOInterface $io): void
     {
         $this->composer = $composer;
         $this->io = $io;
-        $vendorDir = $this->composer->getConfig()->get('vendor-dir');
-        $installed = require $vendorDir . '/composer/installed.php';
+        $this->vendorDir = $this->composer->getConfig()->get('vendor-dir');
+        $installed = require $this->vendorDir . '/composer/installed.php';
         $this->rootPath = realpath($installed['root']['install_path']);
         $this->composer->getConfig()->merge([
             'config' => [
@@ -101,7 +102,7 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 
     private function findPackages(?string $packageNamePattern = null, ?string $type = null): array
     {
-        $installed = require $vendorDir . '/composer/installed.php';
+        $installed = require $this->vendorDir . '/composer/installed.php';
         $result = [];
         foreach ($installed['versions'] as $packageName => $packageInfo) {
             if (!array_key_exists('install_path', $packageInfo) || $packageInfo['install_path'] === null) {
