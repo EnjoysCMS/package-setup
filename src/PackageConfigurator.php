@@ -8,11 +8,6 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
-use Enjoyscms\PackageSetup\Configurator\Cmd;
-use Enjoyscms\PackageSetup\Configurator\ConsoleProjectYml;
-use Enjoyscms\PackageSetup\Configurator\Env;
-use Enjoyscms\PackageSetup\Configurator\AbstractConfigurator;
-use Enjoyscms\PackageSetup\Configurator\Symlink;
 
 class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 {
@@ -27,15 +22,14 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
         $this->composer = $composer;
         $this->io = $io;
         $this->vendorDir = $this->composer->getConfig()->get('vendor-dir');
-        $installed = require $this->vendorDir . '/composer/installed.php';
-        $this->rootPath = realpath($installed['root']['install_path']);
+        $this->rootPath = realpath($this->vendorDir . '/../');
         $this->composer->getConfig()->merge([
             'config' => [
                 'root-path' => $this->rootPath
             ]
         ]);
 
-        if (!getenv('ROOT_PATH')){
+        if (!getenv('ROOT_PATH')) {
             putenv(sprintf('ROOT_PATH=%s', $this->rootPath));
             $_ENV['ROOT_PATH'] = getenv('ROOT_PATH');
         }
@@ -82,7 +76,6 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
                 $handler->setCwd(pathinfo($path, PATHINFO_DIRNAME));
                 $handler->process();
             }
-
         }
         $this->io->write(["", "<info>enjoyscms/package-setup:</info> Packages is configured"]);
     }
@@ -90,8 +83,8 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
     private function getModulesInfo(): array
     {
         $result = [];
-
-        foreach ($this->findPackages('enjoyscms') as $package) {
+        $installed = require $this->vendorDir . '/composer/installed.php';
+        foreach ($this->findPackages($installed['versions'], 'enjoyscms') as $package) {
             $result[sprintf(
                 '%s',
                 $package['name']
@@ -100,11 +93,11 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
         return $result;
     }
 
-    private function findPackages(?string $packageNamePattern = null, ?string $type = null): array
+    private function findPackages(array $installedPackages, ?string $packageNamePattern = null, ?string $type = null): array
     {
-        $installed = require $this->vendorDir . '/composer/installed.php';
+
         $result = [];
-        foreach ($installed['versions'] as $packageName => $packageInfo) {
+        foreach ($installedPackages as $packageName => $packageInfo) {
             if (!array_key_exists('install_path', $packageInfo) || $packageInfo['install_path'] === null) {
                 continue;
             }
