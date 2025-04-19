@@ -28,6 +28,7 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
         $this->io = $io;
         $vendorDir = $this->composer->getConfig()->get('vendor-dir');
         $installed = require $vendorDir . '/composer/installed.php';
+        var_dump($installed); exit;
         $this->installedPackages = $installed['versions'];
         $this->rootPath = realpath($installed['root']['install_path']);
         $this->composer->getConfig()->merge([
