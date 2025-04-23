@@ -2,8 +2,6 @@
 
 namespace Enjoyscms\PackageSetup\Configurator;
 
-use Composer\Composer;
-use Composer\IO\IOInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -15,30 +13,50 @@ class Symlink extends AbstractConfigurator
     {
         $filesystem = new Filesystem();
 
-        foreach ($this->options as $target => $link) {
-            try {
-                $originDir = $this->normalizePath($target);
-                $targetDir = $this->normalizePath($link);
+        foreach ($this->options as $target => $links) {
+            $originDir = $this->normalizePath($target);
 
+            try {
                 if (!$filesystem->exists($originDir)) {
                     throw new IOException(sprintf('%s not exists.', $originDir));
                 }
-                $filesystem->symlink($originDir, $targetDir);
             } catch (IOException $e) {
-                $this->io->write(
+                $this->errorIO(
                     sprintf(
-                        '<comment>Symlink: %s -> %s:</comment>  <fg=red;bg=default>NO</> <fg=gray;bg=default>%s</>',
-                        $target,
-                        $link,
-                        $e->getMessage()
+                        '<fg=red;bg=default>Target: %s: NOT EXISTS</> <fg=gray;bg=default>%s</>',
+                        $originDir,
+                        $this->io->isVeryVerbose() ? $e->getMessage() : ''
                     )
                 );
                 continue;
             }
-            $this->io->write(
-                sprintf('<comment>Symlink: %s -> %s:</comment>  <fg=green;bg=default>OK</>', $target, $link)
-            );
+
+            foreach ((array)$links ?? [] as $link) {
+                try {
+                    $targetDir = $this->normalizePath($link);
+
+                    $filesystem->symlink($originDir, $targetDir);
+                    $this->io->write(
+                        sprintf('<comment>Symlink: %s -> %s:</comment>  <fg=green;bg=default>OK</>', $originDir, $targetDir)
+                    );
+                } catch (IOException $e) {
+                    $this->errorIO(
+                        sprintf(
+                            '<comment>Symlink: %s -> %s:</comment>  <fg=red;bg=default>NO</> <fg=gray;bg=default>%s</>',
+                            $target,
+                            $link,
+                            $this->io->isVeryVerbose() ? $e->getMessage() : ''
+                        )
+                    );
+                    continue;
+                }
+            }
         }
+    }
+
+    private function errorIO(string $msg): void
+    {
+        $this->io->write($msg);
     }
 
     private function normalizePath(string $path): string
