@@ -1,18 +1,19 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
 
-abstract class SetupHandler
+abstract class AbstractConfigurator
 {
     protected string $cwd;
 
     public function __construct(
-        protected array $config,
+        protected array $options,
         public readonly Composer $composer,
-        public readonly IOInterface $io
+        public readonly IOInterface $io,
+        protected ?string $section = null,
     ) {
         $this->cwd = getcwd();
     }

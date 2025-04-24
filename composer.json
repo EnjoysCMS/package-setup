@@ -4,16 +4,25 @@
     "type": "composer-plugin",
     "require": {
         "php": "^8.3",
-        "enjoyscms/core": "6.x-dev",
-        "composer-plugin-api": "^2.0"
+        "enjoys/dotenv-writer": "~0.1.5",
+        "composer-plugin-api": "^2.0",
+        "symfony/yaml": "^5.4 | ^6.0 | ^7.2",
+        "enjoys/functions": "^2.4",
+        "enjoys/config": "^1.8"
     },
     "require-dev": {
-        "composer/composer": "^2.0"
+        "composer/composer": "^2.0",
+        "phpunit/phpunit": "^12.1"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Enjoyscms\\PackageSetup\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Enjoyscms\\PackageSetup\\": "tests/"
         }
     },
     "extra": {

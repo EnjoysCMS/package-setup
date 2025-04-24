@@ -1,22 +1,19 @@
 <?php
 
-namespace Enjoyscms\PackageSetup\SetupHandlers;
+namespace Enjoyscms\PackageSetup\Configurator;
 
-use EnjoysCMS\Core\Console\Utils\CommandsManage;
+use Enjoyscms\PackageSetup\Utils\ConsoleCommandManager;
 
-class ConsoleConfigurator extends SetupHandler
+class ConsoleProjectYml extends AbstractConfigurator
 {
 
+    /**
+     * @throws \Exception
+     */
     public function process(): void
     {
-        if (!array_key_exists('console', $this->config)) {
-            return;
-        }
-
-        $consoleCommands = $this->config['console'];
-
-        $commandManage = new CommandsManage();
-        $registeredCommands = $commandManage->registerCommands($consoleCommands);
+        $commandManage = new ConsoleCommandManager();
+        $registeredCommands = $commandManage->registerCommands($this->options);
         $this->io->write('<comment>Register console commands:</comment>');
         if ($registeredCommands === []) {
             $this->io->write(' <fg=green>- skipped or nothing</></info>');
