@@ -2,6 +2,7 @@
 
 namespace Enjoyscms\PackageSetup\Configurator;
 
+use Enjoyscms\PackageSetup\Utils\PathUtils;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -14,7 +15,8 @@ class Copy extends AbstractConfigurator
         $filesystem = new Filesystem();
 
         foreach ($this->options as $from => $destination) {
-            $originFile = $this->normalizePath($from);
+            $originFile = PathUtils::normalizePath($from, $this->composer->getConfig()->get('root-path'), $this->cwd);
+
 
             try {
                 if (!$filesystem->exists($originFile)) {
@@ -26,7 +28,7 @@ class Copy extends AbstractConfigurator
             }
 
             foreach ((array)$destination ?? [] as $to) {
-                $targetFile = $this->normalizePath($to);
+                $targetFile = PathUtils::normalizePath($to,  $this->composer->getConfig()->get('root-path'), $this->cwd);
                 try {
                     $filesystem->copy($originFile, $targetFile);
                     $this->io->write(
@@ -54,13 +56,5 @@ class Copy extends AbstractConfigurator
         );
     }
 
-    private function normalizePath(string $path): string
-    {
-        return match (true) {
-            \str_starts_with($path, './') => $this->cwd . ltrim($path, '.'),
-            \str_starts_with($path, '~/') => $this->cwd . '/' . ltrim($path, '~/'),
-            \str_starts_with($path, '/') => $this->composer->getConfig()->get('root-path') . '/' . ltrim($path, '/'),
-            default => $this->cwd . '/' . trim($path),
-        };
-    }
+
 }
