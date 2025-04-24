@@ -12,7 +12,8 @@
     },
     "require-dev": {
         "composer/composer": "^2.0",
-        "phpunit/phpunit": "^12.1"
+        "phpunit/phpunit": "^12.1",
+        "symfony/var-dumper": "^7.2"
     },
     "license": "MIT",
     "autoload": {
