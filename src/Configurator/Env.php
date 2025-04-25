@@ -2,10 +2,7 @@
 
 namespace Enjoyscms\PackageSetup\Configurator;
 
-use Composer\Composer;
-use Composer\IO\IOInterface;
 use Enjoys\Dotenv\Parser\Env\Value;
-use Enjoys\Dotenv\Parser\Lines\CommentLine;
 
 class Env extends AbstractConfigurator
 {
@@ -15,11 +12,11 @@ class Env extends AbstractConfigurator
      */
     public function process(): void
     {
-        $envPath = getenv('ROOT_PATH').'/.env.dist';
+        $envPath = getenv('ROOT_PATH') . '/.env.dist';
         $dotenvWriter = new \Enjoys\DotenvWriter\DotenvWriter($envPath);
         $this->io->write(sprintf('<comment>Write ENV: %s</comment>', implode(', ', array_keys($this->options))));
         foreach ($this->options as $key => $value) {
-            $dotenvWriter->setEnv($key, new Value($value, '"'),  $this->section ?? '');
+            $dotenvWriter->setEnv($key, new Value($value, '"'), $this->package?->getName() ?? '');
         }
         $dotenvWriter->save();
     }

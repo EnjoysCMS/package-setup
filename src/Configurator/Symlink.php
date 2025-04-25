@@ -2,6 +2,7 @@
 
 namespace Enjoyscms\PackageSetup\Configurator;
 
+use Enjoyscms\PackageSetup\Utils\PathUtils;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -14,7 +15,7 @@ class Symlink extends AbstractConfigurator
         $filesystem = new Filesystem();
 
         foreach ($this->options as $target => $links) {
-            $originDir = $this->normalizePath($target);
+            $originDir = PathUtils::normalizePath($target, $this->composer->getConfig()->get('root-path'), $this->cwd);
 
             try {
                 if (!$filesystem->exists($originDir)) {
@@ -33,11 +34,19 @@ class Symlink extends AbstractConfigurator
 
             foreach ((array)$links ?? [] as $link) {
                 try {
-                    $targetDir = $this->normalizePath($link);
+                    $targetDir = PathUtils::normalizePath(
+                        $link,
+                        $this->composer->getConfig()->get('root-path'),
+                        $this->cwd
+                    );
 
                     $filesystem->symlink($originDir, $targetDir);
                     $this->io->write(
-                        sprintf('<comment>Symlink: %s -> %s:</comment>  <fg=green;bg=default>OK</>', $originDir, $targetDir)
+                        sprintf(
+                            '<comment>Symlink: %s -> %s:</comment>  <fg=green;bg=default>OK</>',
+                            $originDir,
+                            $targetDir
+                        )
                     );
                 } catch (IOException $e) {
                     $this->errorIO(
@@ -59,13 +68,4 @@ class Symlink extends AbstractConfigurator
         $this->io->write($msg);
     }
 
-    private function normalizePath(string $path): string
-    {
-        return match (true) {
-            \str_starts_with($path, './') => $this->cwd . ltrim($path, '.'),
-            \str_starts_with($path, '~/') => $this->cwd . '/' . ltrim($path, '~/'),
-            \str_starts_with($path, '/') => $this->composer->getConfig()->get('root-path') . '/' . ltrim($path, '/'),
-            default => $this->cwd . '/' . trim($path),
-        };
-    }
 }
