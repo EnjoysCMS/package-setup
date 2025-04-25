@@ -34,11 +34,19 @@ class Symlink extends AbstractConfigurator
 
             foreach ((array)$links ?? [] as $link) {
                 try {
-                    $targetDir = PathUtils::normalizePath($link, $this->composer->getConfig()->get('root-path'), $this->cwd);
+                    $targetDir = PathUtils::normalizePath(
+                        $link,
+                        $this->composer->getConfig()->get('root-path'),
+                        $this->cwd
+                    );
 
                     $filesystem->symlink($originDir, $targetDir);
                     $this->io->write(
-                        sprintf('<comment>Symlink: %s -> %s:</comment>  <fg=green;bg=default>OK</>', $originDir, $targetDir)
+                        sprintf(
+                            '<comment>Symlink: %s -> %s:</comment>  <fg=green;bg=default>OK</>',
+                            $originDir,
+                            $targetDir
+                        )
                     );
                 } catch (IOException $e) {
                     $this->errorIO(

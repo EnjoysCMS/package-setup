@@ -4,6 +4,7 @@ namespace Enjoyscms\PackageSetup\Configurator;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
+use Enjoyscms\PackageSetup\Package;
 
 abstract class AbstractConfigurator
 {
@@ -13,7 +14,7 @@ abstract class AbstractConfigurator
         protected array $options,
         public readonly Composer $composer,
         public readonly IOInterface $io,
-        protected ?string $section = null,
+        protected ?Package $package = null,
     ) {
         $this->cwd = getcwd();
     }
