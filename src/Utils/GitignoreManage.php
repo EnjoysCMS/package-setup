@@ -9,6 +9,9 @@ class GitignoreManage
 
     private array $structure;
 
+    /**
+     * @throws \Exception
+     */
     public function __construct(private string $gitignoreFile)
     {
         if (!file_exists($gitignoreFile)) {

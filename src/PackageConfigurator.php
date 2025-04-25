@@ -82,7 +82,17 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
                 }
                 $handler = new $handlerClass($options, $this->composer, $this->io, $package);
                 $handler->setCwd($package->installationPath);
-                $handler->process();
+                try {
+                    $handler->process();
+                } catch (\Exception $e) {
+                    $this->io->write(
+                        sprintf(
+                            '<fg=red;bg=default>[%s] %s</>',
+                            $e::class,
+                            $e->getMessage()
+                        )
+                    );
+                }
             }
         }
         $this->io->write(["", "<info>enjoyscms/package-setup:</info> Packages is configured"]);
