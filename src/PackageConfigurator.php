@@ -59,11 +59,10 @@ class PackageConfigurator implements PluginInterface, EventSubscriberInterface
 
     public function process(Event $event): void
     {
-        $this->packageCollection->add(new Package($this->composer->getPackage(), $this->rootPath));
         foreach ($this->getModulesPackages() as $modulesPackage) {
             $this->packageCollection->add($modulesPackage);
         }
-
+        $this->packageCollection->add(new Package($this->composer->getPackage(), $this->rootPath));
 
         foreach ($this->packageCollection->getCollection() as $package) {
             $installJsonPath = $package->installationPath . '/install.json';
