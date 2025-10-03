@@ -1,0 +1,39 @@
+name: Composer Dependency Analyzer
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'phpunit.xml'
+
+  push:
+    branches: ['master']
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'phpunit.xml'
+
+jobs:
+  analyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+
+      - name: Run composer dependency analyzer
+        run: vendor/bin/composer-dependency-analyser --config=composer-dependency-analyser.php
