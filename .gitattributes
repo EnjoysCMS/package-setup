@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+composer-dependency-analyser.php export-ignore
+.* export-ignore
+/tests/ export-ignore
+/phpunit.xml export-ignore
